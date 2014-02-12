@@ -9,13 +9,11 @@
  * */
 
 #include "motores.h"
-#include "sensorIR.h"
-#include "ultrasom.h"
-#include "ultrasom_stepper.h"
-#include "LS_ATmega328.h"
-#include "math.h"
-#include "template.h"
 
+/*************************************************************************
+Function: calcula_coordenadas
+Purpose:  vetorial calculation of coordinates
+ **************************************************************************/
 void calcula_coordenadas(int joyX, int joyY, float* motor_esquerda, float* motor_direita) {
 
 	float resultante = 0;
@@ -33,9 +31,12 @@ void calcula_coordenadas(int joyX, int joyY, float* motor_esquerda, float* motor
 	if (*motor_direita >= 255) *motor_direita = 255;
 	if (*motor_esquerda >= 255) *motor_esquerda = 255;
 
-	return;
 }
 
+/*************************************************************************
+Function: move_motores
+Purpose:  moves the motors according to the function calcula_coordenadas()
+ **************************************************************************/
 void move_motores(int joyX, int joyY)
 {
 	float motor_direita = 0;
@@ -44,21 +45,19 @@ void move_motores(int joyX, int joyY)
 	calcula_coordenadas(joyX, joyY, &motor_esquerda, &motor_direita);
 	TIMER0_COMPARE_A_CONFIGURE((int) motor_direita);
 	TIMER0_COMPARE_B_CONFIGURE((int) motor_esquerda);
-
-	//primeiro quadrante
+	//two upper quadrants
 	if (joyY > 0) {
-
 		MOTOR_SHIELD_PORT |= _BV(MOTOR_INB) | _BV(MOTOR_INA);
-
 	} else {
-
 		MOTOR_SHIELD_PORT &= ~(_BV(MOTOR_INB) | _BV(MOTOR_INA) );
 	}
 }
 
-
+/*************************************************************************
+Function: motores_stop
+Purpose:  stops the two motors
+ **************************************************************************/
 void motores_stop(void) {
-
 	TIMER0_COMPARE_A_CONFIGURE(0);
 	TIMER0_COMPARE_B_CONFIGURE(0);
 }

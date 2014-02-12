@@ -36,7 +36,7 @@
 							</tool>
 							<tool id="de.innot.avreclipse.tool.compiler.winavr.app.release.40239178" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.app.release">
 								<option id="de.innot.avreclipse.compiler.option.debug.level.1248443460" name="Generate Debugging Info" superClass="de.innot.avreclipse.compiler.option.debug.level" value="de.innot.avreclipse.compiler.option.debug.level.none" valueType="enumerated"/>
-								<option id="de.innot.avreclipse.compiler.option.optimize.122569603" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.three" valueType="enumerated"/>
+								<option id="de.innot.avreclipse.compiler.option.optimize.122569603" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.two" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.1088905553" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/victor/workspace/robot_all_in_c/robot_aic/src"/>
 								</option>

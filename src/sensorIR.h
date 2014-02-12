@@ -5,8 +5,16 @@
  *      Author: victor
  */
 
+
 #ifndef SENSORIR_H_
 #define SENSORIR_H_
+
+#include <util/delay.h>
+#include "template.h"
+#include "LS_ATmega328.h"
+#include "myDelay.h"
+#include "stdio.h"
+
 #define SENSOR_IR_DDR	DDRC
 #define SENSOR_IR_PORT	PORTC
 #define SENSOR_IR_PIN	PINC
@@ -14,11 +22,8 @@
 #define ALARM_DDR 	DDRB
 #define ALARM_PORT	PORTB
 #define ALARM_BIT	PB0
-#define ALARM_PIN	8  //pino arduino: 8 pino atmega:PB0
-#define ALARM_FREQUENCY	2000 //3kHz
-#define ALARM_DURATION 50 //duracao em ms
 
-int verificaObstaculo(void);
+uint8_t verificaObstaculo(void);
 void obstacleAlarm(void);
-int ir_converToDistance(int adc_value);
+int ir_convertToDistance(int adc_value);
 #endif /* SENSORIR_H_ */

@@ -21,8 +21,8 @@ LICENSE:
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
-************************************************************************/
+
+ ************************************************************************/
 
 /************************************************************************
 uart_available, uart_flush, uart1_available, and uart1_flush functions
@@ -45,7 +45,7 @@ were adapted from the Arduino HardwareSerial.h library by Tim Sharpe on
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-************************************************************************/
+ ************************************************************************/
 
 /************************************************************************
 Changelog for modifications made by Tim Sharpe, starting with the current
@@ -59,7 +59,7 @@ Date        Description
 			library, but has scoping issues accessing internal variables from
 			another program.  Go C!
 
-************************************************************************/
+ ************************************************************************/
 
 /** 
  *  @defgroup pfleury_uart UART Library
@@ -81,10 +81,14 @@ Date        Description
  *  @note Based on Atmel Application Note AVR306
  *  @author Peter Fleury pfleury@gmx.ch  http://jump.to/fleury
  */
- 
+
 /**@{*/
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 #include <stdio.h>
 #include <stdbool.h>
+
 
 #if (__GNUC__ * 100 + __GNUC_MINOR__) < 304
 #error "This library requires AVR-GCC 3.4 or later, update to newer AVR-GCC compiler !"
@@ -92,8 +96,8 @@ Date        Description
 
 
 /*
-** constants and macros
-*/
+ ** constants and macros
+ */
 
 /** @brief  UART Baudrate Expression
  *  @param  xtalcpu  system clock in Mhz, e.g. 4000000L for 4Mhz          
@@ -123,8 +127,8 @@ Date        Description
 #endif
 
 /* 
-** high byte error return code of uart_getc()
-*/
+ ** high byte error return code of uart_getc()
+ */
 #define UART_FRAME_ERROR      0x0800              /* Framing Error by UART       */
 #define UART_OVERRUN_ERROR    0x0400              /* Overrun condition by UART   */
 #define UART_BUFFER_OVERFLOW  0x0200              /* receive ringbuffer overflow */
@@ -132,14 +136,14 @@ Date        Description
 
 
 /*
-** function prototypes
-*/
+ ** function prototypes
+ */
 
 /**
    @brief   Initialize UART and set baudrate 
    @param   baudrate Specify baudrate using macro UART_BAUD_SELECT()
    @return  none
-*/
+ */
 extern void uart_init(unsigned int baudrate);
 
 

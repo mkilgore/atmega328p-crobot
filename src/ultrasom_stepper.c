@@ -15,21 +15,17 @@
 
 
 #include  "ultrasom_stepper.h"
-#include "sensorIR.h"
-#include "LS_ATmega328.h"
-#include "LS_defines.h"
-#include "stdlib.h"
-#include "myDelay.h"
-#include "ultrasom.h"
 
+/*************************************************************************
+Function: set_stepper_zero
+Purpose:  moves the motor to the zero_position, in this case, when it hits my switch
+ **************************************************************************/
 void set_stepper_zero(void) {
-	int zero_position = HIGH;
-	int i = 0;
+	uint8_t zero_position = HIGH;
+	uint8_t i = 0;
 	for (i=0; i<=50;i+=5) {
-
 		zero_position = tst_bit(FIM_DE_CURSO_PIN, FIM_DE_CURSO);
 		//printf("chave_fim_de_curso: %d\r", zero_position);
-
 		if (zero_position == HIGH) {
 			obstacleAlarm();
 			break;
@@ -40,6 +36,10 @@ void set_stepper_zero(void) {
 	}
 }
 
+/*************************************************************************
+Function: rotate
+Purpose:  rotates the motor with the desired number of steps and speed
+ **************************************************************************/
 void rotate(int steps, float speed){
 
 	//rotate a specific number of microsteps (8 microsteps per step) - (negative for reverse movement)
@@ -64,9 +64,13 @@ void rotate(int steps, float speed){
 	}
 }
 
+/*************************************************************************
+Function: sonar_rotate
+Purpose:  used to track obstacles using the ultrasonic sensor, returns if I got obstacle or not
+ **************************************************************************/
 int sonar_rotate(int steps, float speed){
 
-	int obstaculo = 0;
+	uint8_t obstaculo = 0;
 	//rotate a specific number of microsteps (8 microsteps per step) - (negative for reverse movement)
 	//speed is any number from .01 -> 1 with 1 being fastest - Slower is stronger
 	if (steps > 0) {
@@ -94,6 +98,10 @@ int sonar_rotate(int steps, float speed){
 }
 
 
+/*************************************************************************
+Function: rotateDeg
+Purpose:  the same as rotate, but with this you move the motor with the desired angle
+ **************************************************************************/
 void rotateDeg(float deg, float speed){
 	//rotate a specific number of degrees (negitive for reverse movement)
 	//speed is any number from .01 -> 1 with 1 being fastest - Slower is stronger
@@ -118,6 +126,10 @@ void rotateDeg(float deg, float speed){
 	}
 }
 
+/*************************************************************************
+Function: stepper_sweep
+Purpose:  just a debug function to teste the stepper
+ **************************************************************************/
 void stepper_sweep(void) {
 	rotate(25, .01);
 	mydelay_ms(50);
