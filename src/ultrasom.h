@@ -28,8 +28,11 @@
 #define  US_NO_OBSTACLE                 0xFFFE
 
 unsigned int getPulseWidth(void);
-uint8_t get_UltrasoundData(void);
-uint8_t sweep_sonar(void);
+//uint8_t get_UltrasoundData(void);
+uint8_t get_UltrasoundData(int* distance_read);
+//uint8_t sweep_sonar(void);
+uint8_t sweep_sonar(int *distance_read);
+
 
 #endif	/* ULTRASOM_H */
 

@@ -31,20 +31,25 @@ void obstacleAlarm(void) {
 Function: ir_convertToDistance
 Purpose:  returns the distance of IR sensor in centimeters
  **************************************************************************/
-int ir_convertToDistance(int adc_value) {
+int ir_converToDistance(int adc_value) {
 	int distance;
 	distance = (6787/(adc_value -3)) - 4;
 	return distance;
 }
 
-uint8_t verificaObstaculo(void)
+
+/*************************************************************************
+Function: verificaObstaculoIR
+Purpose:  returns 1 if obstacle found using IR sensor
+ **************************************************************************/
+uint8_t verificaObstaculoIR(void)
 {
 	int result_tmp = 0;
-	uint8_t result_final = 0;
+	//uint8_t result_final = 0;
 	int result_media = 0;
 	uint8_t i = 0;
 	//const int n_samples = 5;
-	//int distance_cm = 0;
+	int distance_cm = 0;
 
 	result_tmp = 0;
 
@@ -59,19 +64,19 @@ uint8_t verificaObstaculo(void)
 	result_media = (result_tmp / N_SAMPLES); //I just get a average of read samples to avoid false positives
 	//printf("leitura_ADC: %d\n", result_media );
 
-	//distance_cm = ir_converToDistance(result_media);
+	distance_cm = ir_converToDistance(result_media);
 
-	if (result_media > 500) {
-		result_final = 1;
-	}
-
-	if (result_media <= 500) {
-		result_final = 0;
-	}
+//	if (result_media > 500) {
+//		result_final = 1;
+//	}
+//
+//	if (result_media <= 500) {
+//		result_final = 0;
+//	}
 	result_media = 0;
 
-	return result_final;
-	//return distance_cm;
+	//return result_final;
+	return distance_cm;
 }
 
 

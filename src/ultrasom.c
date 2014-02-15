@@ -85,9 +85,11 @@ unsigned int getPulseWidth(void)
 
 /*************************************************************************
 Function: get_UltrasoundData
-Purpose:  returns the Ultrasonic data sensor in centimeters
+Purpose:  returns the Ultrasonic data sensor read in centimeters
+Parameters: integer pointer to the variable you want to grab the distance in centimeters
  **************************************************************************/
-uint8_t get_UltrasoundData(void)
+//uint8_t get_UltrasoundData(void)
+uint8_t get_UltrasoundData(int* distance_read)
 {
 	uint8_t distance_cm = 0;
 	unsigned int resp;
@@ -118,6 +120,7 @@ uint8_t get_UltrasoundData(void)
 		//printf("clear\r");
 	} else {
 		distance_cm = (resp / 58.0); //Convert to cm
+		*distance_read = distance_cm;
 		//printf("sonar_distance: %d\n", distance_cm);
 	}
 	/* distance value adjust by the user desire*/
@@ -134,14 +137,18 @@ uint8_t get_UltrasoundData(void)
 	}
 	return obstaculo_sonar;
 }
-//*********************************************************************************************
 
-uint8_t sweep_sonar(void) {
+/*************************************************************************
+Function: sweep_sonar
+Purpose:  returns the Ultrasonic data sensor read in centimeters
+Parameters: integer pointer to the variable you want to grab the distance in centimeters
+ **************************************************************************/
+uint8_t sweep_sonar(int* distance_read) {
 	uint8_t i = 0;
 	uint8_t obstaculo_sonar = 0;
 
 	for (i=0; i <=25; i+=5) {
-		obstaculo_sonar = sonar_rotate(5, .02);
+		obstaculo_sonar = sonar_rotate(5, .02, distance_read);
 	}
 	return obstaculo_sonar;
 }

@@ -23,7 +23,7 @@
 #define ALARM_PORT	PORTB
 #define ALARM_BIT	PB0
 
-uint8_t verificaObstaculo(void);
+uint8_t verificaObstaculoIR(void);
 void obstacleAlarm(void);
-int ir_convertToDistance(int adc_value);
+int ir_converToDistance(int adc_value);
 #endif /* SENSORIR_H_ */

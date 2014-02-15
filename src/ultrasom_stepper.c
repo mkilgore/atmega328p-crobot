@@ -68,7 +68,7 @@ void rotate(int steps, float speed){
 Function: sonar_rotate
 Purpose:  used to track obstacles using the ultrasonic sensor, returns if I got obstacle or not
  **************************************************************************/
-int sonar_rotate(int steps, float speed){
+int sonar_rotate(int steps, float speed, int* distance_read){
 
 	uint8_t obstaculo = 0;
 	//rotate a specific number of microsteps (8 microsteps per step) - (negative for reverse movement)
@@ -85,7 +85,7 @@ int sonar_rotate(int steps, float speed){
 	int usDelay = (1/speed) * 70;
 
 	for(int i=0; i < steps; i++){
-		obstaculo = get_UltrasoundData();
+		obstaculo = get_UltrasoundData(distance_read);
 		if (obstaculo == 1) {
 			break;
 		}
