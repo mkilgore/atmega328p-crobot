@@ -119,7 +119,7 @@ uint8_t get_UltrasoundData(int* distance_read)
 	} else if (resp == US_NO_OBSTACLE) {
 		//printf("clear\r");
 	} else {
-		distance_cm = (resp / 58.0); //Convert to cm
+		distance_cm = (resp / 58); //Convert to cm
 		*distance_read = distance_cm;
 		//printf("sonar_distance: %d\n", distance_cm);
 	}
@@ -148,7 +148,7 @@ uint8_t sweep_sonar(int* distance_read) {
 	uint8_t obstaculo_sonar = 0;
 
 	for (i=0; i <=25; i+=5) {
-		obstaculo_sonar = sonar_rotate(5, .02, distance_read);
+		obstaculo_sonar = sonar_rotate(5, 200, distance_read);
 	}
 	return obstaculo_sonar;
 }

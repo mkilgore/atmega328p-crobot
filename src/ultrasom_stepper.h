@@ -26,9 +26,9 @@
 #define FIM_DE_CURSO_PORT               PORTB
 #define FIM_DE_CURSO		            PB3
 
-void rotate(int steps, float speed);
+void rotate(int steps, int speed);
 //int sonar_rotate(int steps, float speed);
-int sonar_rotate(int steps, float speed, int* distance_read);
+int sonar_rotate(int steps, int speed, int* distance_read);
 void rotateDeg(float deg, float speed);
 int read_switches(void);
 void set_stepper_zero(void); //seta motor para posição inicial

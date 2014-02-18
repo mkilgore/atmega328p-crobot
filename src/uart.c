@@ -88,6 +88,8 @@ Date        Description
 
  ************************************************************************/
 #include "uart.h"
+extern volatile uint8_t autonomous;
+
 
 /*
  *  constants and macros
@@ -324,6 +326,8 @@ Purpose:  called when the UART has received a character
 	/* read UART status register and UART data register */
 	usr  = UART0_STATUS;
 	data = UART0_DATA;
+	autonomous = 0;
+	if (data == 'a') autonomous = 1;
 
 	/* */
 #if defined( AT90_UART )
@@ -474,6 +478,7 @@ unsigned int uart_getc(void)
 
 	/* get data from receive buffer */
 	data = UART_RxBuf[tmptail];
+
 
 	return (UART_LastRxError << 8) + data;
 

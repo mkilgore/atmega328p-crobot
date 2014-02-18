@@ -22,9 +22,15 @@
 #include <assert.h>
 #include "avr/interrupt.h"
 
-#define MORE_PWM 210
-#define LESS_PWM 160
+#define MORE_PWM 190
+#define LESS_PWM 165
+#define WITH_CARE 1
+#define NO_CARE	  0
 
+//only detected as obstacle if distance is below 25cm, below 10cm the sensor starts misreading
+#define IR_OBSTACLE_THRESHOLD 25
+#define IR_OBSTACLE_UPPER_THRESHOLD 35
+#define IR_MISREADING 10
 /* define CPU frequency in Mhz here if not defined in Makefile */
 #ifndef F_CPU
 #define F_CPU 16000000UL
@@ -36,8 +42,9 @@
 /********************************************************************************
 Global Variables
  ********************************************************************************/
-static FILE mystdout = FDEV_SETUP_STREAM(usart_putchar_printf, NULL, _FDEV_SETUP_WRITE);
+volatile uint8_t autonomous;
 
+static FILE mystdout = FDEV_SETUP_STREAM(usart_putchar_printf, NULL, _FDEV_SETUP_WRITE);
 /*************************************************************************
 	functions
  *************************************************************************/
@@ -86,10 +93,19 @@ void goLeft(char flag)
 	_delay_ms(100);
 }
 
-void stopMove()
+void stopMove(void)
 {
 	TIMER0_COMPARE_A_CONFIGURE(0);
 	TIMER0_COMPARE_B_CONFIGURE(0);
+}
+
+void turn(void)
+{
+	MOTOR_SHIELD_PORT |= _BV(MOTOR_INB);
+	MOTOR_SHIELD_PORT &= ~_BV(MOTOR_INA);
+	TIMER0_COMPARE_A_CONFIGURE(LESS_PWM);
+	TIMER0_COMPARE_B_CONFIGURE(LESS_PWM);
+	_delay_ms(100);
 }
 
 /*************************************************************************
@@ -152,8 +168,8 @@ void ADC_init(void) {
 	SENSOR_IR_DDR &= ~_BV(SENSOR_IR_BIT);
 	//ADC in 10bits : used in IR sensor routine : without shift left or right
 	ADC_REFERENCE_AREF(); 			//ADC reference in 5V
-	ADC_CLOCK_PRESCALER_16();
-	/* the original ADC frequency of this project was 125KHz (Prescaler = 128), thus, I changed it to sample faster, in 1MHz
+	ADC_CLOCK_PRESCALER_128();
+	/* the original ADC frequency of this project was 125KHz (Prescaler = 128), thus, I changed it to sample faster, in 1MHz (Prescaler16)
 	 * I have some loss in precision, working in 10 bits with a frequency bigger than 200KHz, but in this case this do not matters
 	 * */
 	ADC_ENABLE();
@@ -195,20 +211,21 @@ int main(void)
 	stepper_init();
 	set_stepper_zero();
 #endif
+
 	sei();
 
 	for(;;)
 	{
-		stopMove();
-		if (uart_available() > 0) {
+		do {
+			stopMove();
 			obstaculo_ir = 0;
 			obstacle_flag = 0;
 			while (uart_available() == 0);
 			received = uart_getc();
 			obstaculo_ir = verificaObstaculoIR();
-			if (obstaculo_ir > 25) obstacle_flag = 0;
-			else if (obstaculo_ir > 10 && obstaculo_ir < 25) obstacle_flag = 1;
-			else if (obstaculo_ir <= 10 ) obstacle_flag = 2;
+			if (obstaculo_ir > IR_OBSTACLE_THRESHOLD) 										obstacle_flag = 0;
+			else if (obstaculo_ir > IR_MISREADING && obstaculo_ir < IR_OBSTACLE_THRESHOLD) 	obstacle_flag = 1;
+			else if (obstaculo_ir <= IR_MISREADING ) 										obstacle_flag = 2;
 
 			if (obstacle_flag == 0 || obstacle_flag == 1) {
 				switch(received) {
@@ -225,18 +242,29 @@ int main(void)
 						goRight(obstacle_flag);
 						break;
 					default:
-						stopMove(obstacle_flag);
+						stopMove();
 						break;
 				}
 			} else {
 				if (received == 'd') {
-					goBack(1);
+					goBack(WITH_CARE);
 				} else {
 					stopMove();
 					obstacleAlarm();
 				}
 			}
-		}
+		} while (autonomous == 0);  //defined inside UART0_RECEIVE_INTERRUPT interrupt on uart.c
+		do {
+			obstaculo_ir = 0;
+			obstaculo_ir = verificaObstaculoIR();
+			if (obstaculo_ir >= IR_OBSTACLE_THRESHOLD && obstaculo_ir < IR_OBSTACLE_UPPER_THRESHOLD) goForward(WITH_CARE);
+			else if (obstaculo_ir >= IR_OBSTACLE_UPPER_THRESHOLD) goForward(NO_CARE);
+			else {
+				goBack(0);
+				turn();
+			}
+		} while (autonomous == 1);
+
 	}
 
 	return 0;

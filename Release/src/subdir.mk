@@ -4,7 +4,6 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../src/motores.c \
 ../src/myDelay.c \
 ../src/sensorIR.c \
 ../src/uart.c \
@@ -12,7 +11,6 @@ C_SRCS += \
 ../src/ultrasom_stepper.c 
 
 OBJS += \
-./src/motores.o \
 ./src/myDelay.o \
 ./src/sensorIR.o \
 ./src/uart.o \
@@ -20,7 +18,6 @@ OBJS += \
 ./src/ultrasom_stepper.o 
 
 C_DEPS += \
-./src/motores.d \
 ./src/myDelay.d \
 ./src/sensorIR.d \
 ./src/uart.d \

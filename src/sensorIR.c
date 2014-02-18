@@ -10,7 +10,8 @@
 #include "sensorIR.h"
 
 /* Number of samples I read from ADC to give some result*/
-#define N_SAMPLES 5
+#define N_SAMPLES 8
+#define N_SHIFTS  3		//to avoid divisions I take 8 samples and I do three shifts left to divide result by 8 or 2^3
 
 /*************************************************************************
 Function: obstacleAlarm
@@ -57,11 +58,11 @@ uint8_t verificaObstaculoIR(void)
 		ADC_START_CONVERSION();
 		ADC_WAIT_CONVERSION_FINISH();
 		result_tmp += ADC; 			//read the entire ADC
-		mydelay_us(25); 			//time of each samples in 1MHz ADC frequency
+		//mydelay_us(25); 			//time of each samples in 1MHz ADC frequency
 		//printf("leitura_ADC: %d\n", ADC );
 	}
 
-	result_media = (result_tmp / N_SAMPLES); //I just get a average of read samples to avoid false positives
+	result_media = (result_tmp >> N_SHIFTS); //I just get a average of read samples to avoid false positives
 	//printf("leitura_ADC: %d\n", result_media );
 
 	distance_cm = ir_converToDistance(result_media);

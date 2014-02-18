@@ -30,7 +30,7 @@ void set_stepper_zero(void) {
 			obstacleAlarm();
 			break;
 		} else {
-			rotate(-5, .02); //reverse
+			rotate(-5, 200); //reverse
 			//mydelay_us(10);
 		}
 	}
@@ -38,9 +38,9 @@ void set_stepper_zero(void) {
 
 /*************************************************************************
 Function: rotate
-Purpose:  rotates the motor with the desired number of steps and speed
+Purpose:  rotates the motor with the desired number of steps and speed (varies from 100 to 1000)
  **************************************************************************/
-void rotate(int steps, float speed){
+void rotate(int steps, int speed){
 
 	//rotate a specific number of microsteps (8 microsteps per step) - (negative for reverse movement)
 	//speed is any number from .01 -> 1 with 1 being fastest - Slower is stronger
@@ -53,7 +53,7 @@ void rotate(int steps, float speed){
 	steps = abs(steps);
 
 	//float usDelay = (1/speed) * 70;
-	int usDelay = (1/speed) * 70;
+	int usDelay = (1000/speed) * 70; //speed (varies from 100 to 1000)
 
 	for(int i=0; i < steps; i++){
 
@@ -68,7 +68,7 @@ void rotate(int steps, float speed){
 Function: sonar_rotate
 Purpose:  used to track obstacles using the ultrasonic sensor, returns if I got obstacle or not
  **************************************************************************/
-int sonar_rotate(int steps, float speed, int* distance_read){
+int sonar_rotate(int steps, int speed, int* distance_read){
 
 	uint8_t obstaculo = 0;
 	//rotate a specific number of microsteps (8 microsteps per step) - (negative for reverse movement)
@@ -82,7 +82,7 @@ int sonar_rotate(int steps, float speed, int* distance_read){
 	steps = abs(steps);
 
 	//float usDelay = (1/speed) * 70;
-	int usDelay = (1/speed) * 70;
+	int usDelay = (1000/speed) * 70; //speed (varies from 100 to 1000)
 
 	for(int i=0; i < steps; i++){
 		obstaculo = get_UltrasoundData(distance_read);
@@ -131,8 +131,8 @@ Function: stepper_sweep
 Purpose:  just a debug function to teste the stepper
  **************************************************************************/
 void stepper_sweep(void) {
-	rotate(25, .01);
+	rotate(25, 100);
 	mydelay_ms(50);
-	rotate(-25, .01); //reverse
+	rotate(-25, 100); //reverse
 	mydelay_ms(50);
 }
