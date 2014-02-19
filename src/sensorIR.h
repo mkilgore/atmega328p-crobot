@@ -25,5 +25,5 @@
 
 uint8_t verificaObstaculoIR(void);
 void obstacleAlarm(void);
-int ir_converToDistance(int adc_value);
+int ir_convertToDistance(int adc_value);
 #endif /* SENSORIR_H_ */

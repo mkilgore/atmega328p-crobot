@@ -88,7 +88,7 @@ Date        Description
 
  ************************************************************************/
 #include "uart.h"
-extern volatile uint8_t autonomous;
+volatile uint8_t autonomous;
 
 
 /*

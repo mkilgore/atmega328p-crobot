@@ -22,15 +22,15 @@
 #include <assert.h>
 #include "avr/interrupt.h"
 
-#define MORE_PWM 190
-#define LESS_PWM 165
+#define MORE_PWM 200
+#define LESS_PWM 170
 #define WITH_CARE 1
 #define NO_CARE	  0
 
 //only detected as obstacle if distance is below 25cm, below 10cm the sensor starts misreading
-#define IR_OBSTACLE_THRESHOLD 25
-#define IR_OBSTACLE_UPPER_THRESHOLD 35
-#define IR_MISREADING 10
+#define IR_OBSTACLE_THRESHOLD 20
+#define IR_OBSTACLE_UPPER_THRESHOLD 30
+
 /* define CPU frequency in Mhz here if not defined in Makefile */
 #ifndef F_CPU
 #define F_CPU 16000000UL
@@ -42,15 +42,16 @@
 /********************************************************************************
 Global Variables
  ********************************************************************************/
-volatile uint8_t autonomous;
+extern volatile uint8_t autonomous;
 
 static FILE mystdout = FDEV_SETUP_STREAM(usart_putchar_printf, NULL, _FDEV_SETUP_WRITE);
 /*************************************************************************
 	functions
  *************************************************************************/
 
-void goForward(char flag)
+void goBack(char flag)
 {
+	//printf("goBack\n");
 	MOTOR_SHIELD_PORT |= _BV(MOTOR_INB) | _BV(MOTOR_INA);
 	if (flag == 1) {
 		TIMER0_COMPARE_A_CONFIGURE(LESS_PWM);
@@ -63,8 +64,9 @@ void goForward(char flag)
 	_delay_ms(100);
 }
 
-void goBack(char flag)
+void goForward(char flag)
 {
+	//printf("goForward\n");
 	MOTOR_SHIELD_PORT &= ~(_BV(MOTOR_INB) | _BV(MOTOR_INA) );
 	if (flag == 1) {
 		TIMER0_COMPARE_A_CONFIGURE(LESS_PWM);
@@ -77,17 +79,19 @@ void goBack(char flag)
 	_delay_ms(100);
 }
 
-void goRight(char flag)
+void goLeft(char flag)
 {
-	MOTOR_SHIELD_PORT |= _BV(MOTOR_INB) | _BV(MOTOR_INA);
+	//printf("goRight\n");
+	MOTOR_SHIELD_PORT &= ~(_BV(MOTOR_INB) | _BV(MOTOR_INA) );
 	TIMER0_COMPARE_A_CONFIGURE(0);
 	if (flag == 1)  TIMER0_COMPARE_B_CONFIGURE(LESS_PWM); else TIMER0_COMPARE_B_CONFIGURE(MORE_PWM);
 	_delay_ms(100);
 }
 
-void goLeft(char flag)
+void goRight(char flag)
 {
-	MOTOR_SHIELD_PORT |= _BV(MOTOR_INB) | _BV(MOTOR_INA);
+	//printf("goLeft\n");
+	MOTOR_SHIELD_PORT &= ~(_BV(MOTOR_INB) | _BV(MOTOR_INA) );
 	if (flag == 1)  TIMER0_COMPARE_A_CONFIGURE(LESS_PWM); else TIMER0_COMPARE_A_CONFIGURE(MORE_PWM);
 	TIMER0_COMPARE_B_CONFIGURE(0);
 	_delay_ms(100);
@@ -168,7 +172,7 @@ void ADC_init(void) {
 	SENSOR_IR_DDR &= ~_BV(SENSOR_IR_BIT);
 	//ADC in 10bits : used in IR sensor routine : without shift left or right
 	ADC_REFERENCE_AREF(); 			//ADC reference in 5V
-	ADC_CLOCK_PRESCALER_128();
+	ADC_CLOCK_PRESCALER_16();
 	/* the original ADC frequency of this project was 125KHz (Prescaler = 128), thus, I changed it to sample faster, in 1MHz (Prescaler16)
 	 * I have some loss in precision, working in 10 bits with a frequency bigger than 200KHz, but in this case this do not matters
 	 * */
@@ -223,9 +227,9 @@ int main(void)
 			while (uart_available() == 0);
 			received = uart_getc();
 			obstaculo_ir = verificaObstaculoIR();
-			if (obstaculo_ir > IR_OBSTACLE_THRESHOLD) 										obstacle_flag = 0;
-			else if (obstaculo_ir > IR_MISREADING && obstaculo_ir < IR_OBSTACLE_THRESHOLD) 	obstacle_flag = 1;
-			else if (obstaculo_ir <= IR_MISREADING ) 										obstacle_flag = 2;
+			if (obstaculo_ir > IR_OBSTACLE_THRESHOLD) 														obstacle_flag = 0;
+			else if (obstaculo_ir > IR_OBSTACLE_THRESHOLD && obstaculo_ir < IR_OBSTACLE_UPPER_THRESHOLD) 	obstacle_flag = 1;
+			else if (obstaculo_ir <= IR_OBSTACLE_THRESHOLD ) 												obstacle_flag = 2;
 
 			if (obstacle_flag == 0 || obstacle_flag == 1) {
 				switch(received) {
@@ -236,9 +240,11 @@ int main(void)
 						goBack(obstacle_flag);
 						break;
 					case 'l':
+						printf("recebeu L\n");
 						goLeft(obstacle_flag);
 						break;
 					case 'r':
+						printf("recebeu R\n");
 						goRight(obstacle_flag);
 						break;
 					default:
@@ -264,8 +270,8 @@ int main(void)
 				turn();
 			}
 		} while (autonomous == 1);
-
 	}
+
 
 	return 0;
 }
