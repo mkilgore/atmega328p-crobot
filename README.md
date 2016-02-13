@@ -1,4 +1,4 @@
-robot_aic
+atmega328p-crobot
 =========
 
-The same robot did before ported to using only C functions, AVR Atmega328p compatible.
+Robot programmed in ANSI C for Atmega328p micontroller.
